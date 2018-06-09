@@ -16,7 +16,7 @@ L=0.4;
 %type = 3;
 %L=[0.5;0.15]
 
-API = vrepApiWrapper;
+API = vrepApiWrapper_unicycle;
 API.startConnection('127.0.0.1', 19997);
 
 EndTime = 20; %sec %final time of the simulation
@@ -123,13 +123,13 @@ for t = [0:SamplingTime:EndTime]
     %%%%% Set the velocity to VREP robot %%%%%
     %For the unicycle model, "leftMotor" has been placed to the front
     %0.15 * 0.5 is the radius of the wheels
-    API.setMotorVelocities(control1 / (0.5 * 0.15),0);
+    API.setMotorVelocities(control1 / (0.5 * 0.15));
     %Set the steering angle target for AGV
     API.setSteeringAngleTarget(control2);
     %Trigger a simulation step
     API.triggerStep();
 
-    simvel = API.getJointPositionBuffer(API.leftMotor);
+    simvel = API.getJointPositionBuffer(API.frontMotor);
     % simulation for a time interval of [0,SamplingTime]
     [time,newX] = ode45(@(time,newX) TargoncaKinematics(time,newX,velocity,angularVelocity),[0 SamplingTime],oldX);
     time = time';
