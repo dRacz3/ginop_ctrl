@@ -62,10 +62,17 @@ classdef vrepApiWrapper_unicycle < handle
           [returnCode, position] = self.vrep.simxGetJointPosition(clientID, self.frontMotor        , self.vrep.simx_opmode_streaming);
           [returnCode, position] = self.vrep.simxGetJointPosition(clientID, self.steeringMotor    , self.vrep.simx_opmode_streaming);
           [returnCode, velocity] = self.vrep.simxGetObjectFloatParameter(clientID, self.frontMotor , self.jointVelocityParamID, self.vrep.simx_opmode_streaming);
-         end
+        end
 
+         
+        %This function returns the x,y,z position of the AGV Center dummy
         function position = getPosition(self)
             [return_code, position] = self.vrep.simxGetObjectPosition(self.clientID, self.center, -1, self.vrep.simx_opmode_oneshot_wait);
+        end
+        
+        %This function returns the Euler angles of the AGV Center dummy
+        function orientation = getOrientation(self)
+            [return_code, orientation] = self.vrep.simxGetObjectOrientation(self.clientID, self.center, -1, self.vrep.simx_opmode_oneshot_wait);    
         end
         
         % Simplified API methods to handle motors easily:

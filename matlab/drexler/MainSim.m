@@ -127,6 +127,7 @@ for t = [0:SamplingTime:EndTime]
     %Set the steering angle target for AGV
     API.setSteeringAngleTarget(control2);
     position = API.getPosition();
+    orientation = API.getOrientation()
     %Trigger a simulation step
     API.triggerStep();
 
