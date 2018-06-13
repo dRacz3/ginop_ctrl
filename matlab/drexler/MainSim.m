@@ -59,11 +59,17 @@ axis([XMin XMax YMin YMax])
 % P3 = ginput(1)';
 % plot([P3(1) P4(1)],[P3(2) P4(2)],'b')
 % 
-% ReferenceTrajectory = GenerateBezier(P1,P2,P3,P4,SamplingTime,EndTime);
+P1 = [0 0]'
+P2 = [5 0]'
+P3 = [1 0]'
+P4 = [5 10]'
+ReferenceTrajectory = GenerateBezier(P1,P2,P3,P4,SamplingTime,EndTime);
 
 % %circle
 tvec = [0:SamplingTime:EndTime+SamplingTime]/(SamplingTime+EndTime)*2*pi;
-ReferenceTrajectory = [1+5*cos(tvec);1+5*sin(tvec);tvec+pi/2];
+% ReferenceTrajectory = [10*sin(tvec);-10+10*cos(tvec);tvec];
+% ReferenceTrajectory = [10*tvec/EndTime; 1*tvec/EndTime; atan2(1,10)*ones(size(tvec))];
+% ReferenceTrajectory = [tvec/EndTime;pi/2]
 
 plot(ReferenceTrajectory(1,:),ReferenceTrajectory(2,:),'r','Linewidth',1.5)
 
@@ -91,7 +97,9 @@ title('Give the initial heading of the car')
 InitialOrientation=ReferenceTrajectory(3,1); % no initial orientation
 % error
 InitialWheelOrientation = 0;
-plotTargonca(fig,InitialPosition,InitialOrientation,InitialWheelOrientation,1,'b');
+position = API.getPosition()
+    orientation = API.getOrientation()
+plotTargonca(fig,position(1:2)',orientation(3)-pi/2,InitialWheelOrientation,1,'b');
 
 title('Press any key to start')
 pause
@@ -100,8 +108,10 @@ saveas(gcf,'fig0','fig')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%                 Simulation, control and plot                     %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-oldX = [InitialPosition;InitialOrientation];
+position = API.getPosition()
+    orientation = API.getOrientation()
+oldX = [position(1:2)'; orientation(3)-pi/2]
+% pause
 X = [];
 RealInputs = [];
 RefTVec = [];
@@ -127,7 +137,7 @@ for t = [0:SamplingTime:EndTime]
     %Set the steering angle target for AGV
     API.setSteeringAngleTarget(control2);
     position = API.getPosition();
-    orientation = API.getOrientation()
+    orientation = API.getOrientation();
     %Trigger a simulation step
     API.triggerStep();
 
@@ -145,7 +155,9 @@ for t = [0:SamplingTime:EndTime]
     RefIVec = [RefIVec [ReferenceInputs(1,ii)*ones(size(time));atan2(ReferenceInputs(2,ii)*L,ReferenceInputs(1,ii))*ones(size(time))]];
     RealInputs = [RealInputs [control1*ones(size(time));control2*ones(size(time))]];
     X = [X newX'];
-    newX = newX(end,:)';
+    
+%     newX = newX(end,:)';
+    newX = [position(1:2)'; orientation(3)-pi/2];
     oldX = newX;
     plotTargonca(fig,newX(1:2),newX(3),type,1,'b',control2);
     hold on

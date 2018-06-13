@@ -14,8 +14,8 @@ function [velocity,angularVelocity] = TrackingControl(OldX, RefVelocity,RefAngul
 
 %%feedback gains
 k1 = 0.5;
-k2 = 0.5;
-k3 = 1;
+k2 = 5;
+k3 = 5;
 % for testing if the reference velocities are correct
 % k1=0;
 % k2=0;
@@ -30,10 +30,10 @@ yr = ReferenceTrajectory(2); %x,ref,k+1 spatial
 phir = ReferenceTrajectory(3); %phi,ref,k+1 spatial
 
 ek = [xk;yk]-[xr;yr]; %tracking error, spatial
-eref = planarRot(phir)\ek; %tracking error, reference
+eref = planarRot(phir)\ek %tracking error, reference
 erx = eref(1); %e,x reference
 ery = eref(2); %e,y reference
-orib = mod(mod(phik,2*pi)-mod(phir,2*pi),2*pi); %orientation error, reference
+orib = phik-phir %orientation error, reference
 
 if k1==0 %for testing if the reference velocities are correct
     velocity = RefVelocity;
