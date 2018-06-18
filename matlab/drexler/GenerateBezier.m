@@ -8,4 +8,5 @@ ReferenceOrientation = atan2(diff(ReferencePosition(2,:)),diff(ReferencePosition
 ReferenceOrientation(end+1)=ReferenceOrientation(end); %the last two orientations are identical (this is just an approximation, but
 % it is needed to avoid decreasing the number of samples)
 
+
 ReferenceTrajectory= [ReferencePosition;ReferenceOrientation];
